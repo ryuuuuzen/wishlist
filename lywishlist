@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>wishlist tersimpan!</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background:; #f0f0f0;
+      padding: 25px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    input[type="text"] {
+      padding: 10px: black;
+      width: 60%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      padding: 5px 10: gray;
+      color: black;
+      border: gray;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: white;
+      padding: 10px: white;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .checked {
+      text-decoration: line-through;
+      color: black;
+    }
+    .left-side {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .delete-btn {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>𐙚 — 🍎 wishlist !</h1>
+
+  <div class="input-area">
+    <input type="text" id="wishlistInput" placeholder="⪩ ⪨ ִ ࣪tambahkan item wishlist!">
+    <button onclick="addItem()">🍎 okei - !</button>
+  </div>
+
+  <ul id="wishlistList"></ul>
+
+  <script>
+    let wishlist = [];
+
+    // Ambil data dari localStorage saat halaman dimuat
+    window.onload = function () {
+      const data = localStorage.getItem("wishlist");
+      if (data) {
+        wishlist = JSON.parse(data);
+        renderWishlist();
+      }
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    }
+
+    function addItem() {
+      const input = document.getElementById("wishlistInput");
+      const text = input.value.trim();
+      if (text === "") return;
+
+      wishlist.push({ text, checked: false });
+      saveToLocalStorage();
+      renderWishlist();
+      input.value = "";
+    }
+
+    function deleteItem(index) {
+      wishlist.splice(index, 1);
+      saveToLocalStorage();
+      renderWishlist();
+    }
+
+    function renderWishlist() {
+      const ul = document.getElementById("wishlistList");
+      ul.innerHTML = "";
+      wishlist.forEach((item, index) => {
+        const li = document.createElement("li");
+
+        const left = document.createElement("div");
+        left.className = "left-side";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = item.checked;
+
+        const span = document.createElement("span");
+        span.textContent = item.text;
+        if (item.checked) span.classList.add("checked");
+
+        checkbox.addEventListener("change", () => {
+          item.checked = checkbox.checked;
+          saveToLocalStorage();
+          renderWishlist();
+        });
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "hapus";
+        deleteBtn.className = "delete-btn";
+        deleteBtn.onclick = () => deleteItem(index);
+
+        left.appendChild(checkbox);
+        left.appendChild(span);
+
+        li.appendChild(left);
+        li.appendChild(deleteBtn);
+        ul.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
